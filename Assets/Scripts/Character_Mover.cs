@@ -36,11 +36,12 @@ public class Character_Mover : MonoBehaviour
         input = new();
         input.Player.Enable();
         input.Player.Jump.performed += Jump_performed;
+
     }
 
     private void Jump_performed(InputAction.CallbackContext obj)
     {
-        
+        jumpPressedTime = Time.time;
     }
     private void OnDisable()
     {
@@ -49,11 +50,9 @@ public class Character_Mover : MonoBehaviour
     }
     void Start()
     {
-
        animator = GetComponent<Animator>();
        playerController= GetComponent<CharacterController>();
        oriStepOff = playerController.stepOffset;
-       //Debug.Log("<color=red>I Am KD!</color>" + " And I Love Games");
     }
     void Update()
     {
@@ -61,7 +60,7 @@ public class Character_Mover : MonoBehaviour
         Vector3 movementDir = new Vector3(inputVector.x,0, inputVector.y);
         float inputMagnitude = Mathf.Clamp01(movementDir.magnitude);
 
-        if(Input.GetKey(KeyCode.LeftShift)||Input.GetKey(KeyCode.RightShift)||Input.GetButton("Fire3"))   // walk
+        if(input.Player.Walk.IsPressed())   // walk
         {
             inputMagnitude /= 2;
         }
@@ -81,10 +80,6 @@ public class Character_Mover : MonoBehaviour
         if(playerController.isGrounded)
         {
             lastGroundTime = Time.time;
-        }
-        if(Input.GetButtonDown("Jump"))
-        {
-            jumpPressedTime = Time.time;
         }
 
         if (Time.time - lastGroundTime <= jumpGraceTime)
@@ -135,10 +130,6 @@ public class Character_Mover : MonoBehaviour
             playerController.Move(velocity*Time.deltaTime);
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            animator.SetTrigger("Rasengan");
-        }
 
     }
     private void OnAnimatorMove()
